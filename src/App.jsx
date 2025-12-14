@@ -1,35 +1,38 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { AuthProvider } from "./context/AuthContext";
+import ProtectedRoute from "./routes/ProtectedRoute";
 
-function App() {
-  const [count, setCount] = useState(0)
+import Header from "./components/Header";
+import Menu from "./components/Menu";
+import Footer from "./components/Footer";
 
+import LoginPage from "./pages/LoginPage";
+import HomePage from "./pages/HomePage";
+import EvaluacionesPage from "./pages/EvaluacionesPage";
+import ReportesPage from "./pages/ReportesPage";
+import ConfiguracionPage from "./pages/ConfiguracionPage";
+import AyudaPage from "./pages/AyudaPage";
+
+export default function App() {
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    <AuthProvider>
+      <BrowserRouter>
+        <div className="flex flex-col min-h-screen">
+          <Header />
+          <Menu />
+          <main className="flex-grow p-6">
+            <Routes>
+              <Route path="/login" element={<LoginPage />} />
+              <Route path="/" element={<ProtectedRoute><HomePage /></ProtectedRoute>} />
+              <Route path="/evaluaciones" element={<ProtectedRoute><EvaluacionesPage /></ProtectedRoute>} />
+              <Route path="/reportes" element={<ProtectedRoute><ReportesPage /></ProtectedRoute>} />
+              <Route path="/configuracion" element={<ProtectedRoute><ConfiguracionPage /></ProtectedRoute>} />
+              <Route path="/ayuda" element={<ProtectedRoute><AyudaPage /></ProtectedRoute>} />
+            </Routes>
+          </main>
+          <Footer />
+        </div>
+      </BrowserRouter>
+    </AuthProvider>
+  );
 }
-
-export default App

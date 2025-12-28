@@ -1,0 +1,1 @@
+﻿export const HighRiskMonitoringPage = () => { return null; };

@@ -1,47 +1,161 @@
-import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
-import { AuthProvider } from "./context/AuthContext";
-import ProtectedRoute from "./routes/ProtectedRoute";
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { useAuthStore } from './store/authStore';
+import { Layout } from './components/layout/Layout';
+import { ProtectedRoute } from './components/common/ProtectedRoute';
+import { LoginPage } from './pages/LoginPage';
+import { DashboardPage } from './pages/DashboardPage';
+import { PatientsPage } from './pages/PatientsPage';
+import { SentimentAnalysisPage } from './pages/SentimentAnalysisPage';
+import { HighRiskMonitoringPage } from './pages/HighRiskMonitoringPage';
 
-import Header from "./components/Header";
-import Menu from "./components/Menu";
-import Footer from "./components/Footer";
-
-import LoginPage from "./pages/LoginPage";
-import HomePage from "./pages/HomePage";
-import EvaluacionesPage from "./pages/EvaluacionesPage";
-import ReportesPage from "./pages/ReportesPage";
-import ConfiguracionPage from "./pages/ConfiguracionPage";
-import AyudaPage from "./pages/AyudaPage";
-
-function AppLayout() {
-  const location = useLocation();
-  const hideMenu = location.pathname === "/login" || location.pathname.startsWith("/login");
-
-  return (
-    <div className="flex flex-col min-h-screen">
-      <Header />
-      {!hideMenu && <Menu />}
-      <main className="flex-grow p-6">
-        <Routes>
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/" element={<ProtectedRoute><HomePage /></ProtectedRoute>} />
-          <Route path="/evaluaciones" element={<ProtectedRoute><EvaluacionesPage /></ProtectedRoute>} />
-          <Route path="/reportes" element={<ProtectedRoute><ReportesPage /></ProtectedRoute>} />
-          <Route path="/configuracion" element={<ProtectedRoute><ConfiguracionPage /></ProtectedRoute>} />
-          <Route path="/ayuda" element={<ProtectedRoute><AyudaPage /></ProtectedRoute>} />
-        </Routes>
-      </main>
-      <Footer />
+// Placeholder pages - estas pueden ser desarrolladas después
+const ConsultationsPage = () => (
+  <div className="space-y-6">
+    <h1 className="text-3xl font-bold text-gray-900">Gestión de Consultas</h1>
+    <div className="card">
+      <p className="text-gray-600">Módulo de consultas médicas en desarrollo...</p>
     </div>
+  </div>
+);
+
+const EvaluationsPage = () => (
+  <div className="space-y-6">
+    <h1 className="text-3xl font-bold text-gray-900">Evaluaciones</h1>
+    <div className="card">
+      <p className="text-gray-600">Módulo de evaluaciones en desarrollo...</p>
+    </div>
+  </div>
+);
+
+const ReportsPage = () => (
+  <div className="space-y-6">
+    <h1 className="text-3xl font-bold text-gray-900">Reportes</h1>
+    <div className="card">
+      <p className="text-gray-600">Módulo de reportes en desarrollo...</p>
+    </div>
+  </div>
+);
+
+const UsersPage = () => (
+  <div className="space-y-6">
+    <h1 className="text-3xl font-bold text-gray-900">Gestión de Usuarios</h1>
+    <div className="card">
+      <p className="text-gray-600">Módulo de usuarios en desarrollo (solo ADMIN)...</p>
+    </div>
+  </div>
+);
+
+const SettingsPage = () => (
+  <div className="space-y-6">
+    <h1 className="text-3xl font-bold text-gray-900">Configuración</h1>
+    <div className="card">
+      <p className="text-gray-600">Módulo de configuración en desarrollo...</p>
+    </div>
+  </div>
+);
+
+function App() {
+  const { isAuthenticated } = useAuthStore();
+
+  return (
+    <BrowserRouter>
+      <Routes>
+        {/* Public Routes */}
+        <Route
+          path="/login"
+          element={isAuthenticated ? <Navigate to="/" replace /> : <LoginPage />}
+        />
+
+        {/* Protected Routes */}
+        <Route
+          path="/"
+          element={
+            <ProtectedRoute>
+              <Layout />
+            </ProtectedRoute>
+          }
+        >
+          <Route index element={<DashboardPage />} />
+
+          <Route
+            path="patients"
+            element={
+              <ProtectedRoute roles={['ADMIN', 'DOCTOR', 'ENFERMERO', 'RECEPCIONISTA']}>
+                <PatientsPage />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="consultations"
+            element={
+              <ProtectedRoute roles={['ADMIN', 'DOCTOR', 'ENFERMERO']}>
+                <ConsultationsPage />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="evaluations"
+            element={
+              <ProtectedRoute roles={['ADMIN', 'DOCTOR', 'ENFERMERO', 'ANALISTA']}>
+                <EvaluationsPage />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="sentiment"
+            element={
+              <ProtectedRoute roles={['ADMIN', 'DOCTOR', 'ANALISTA']}>
+                <SentimentAnalysisPage />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="reports"
+            element={
+              <ProtectedRoute roles={['ADMIN', 'DOCTOR', 'ANALISTA', 'AUDITOR']}>
+                <ReportsPage />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="high-risk"
+            element={
+              <ProtectedRoute roles={['ADMIN', 'DOCTOR', 'ENFERMERO']}>
+                <HighRiskMonitoringPage />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="users"
+            element={
+              <ProtectedRoute roles={['ADMIN']}>
+                <UsersPage />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="settings"
+            element={
+              <ProtectedRoute roles={['ADMIN', 'DOCTOR']}>
+                <SettingsPage />
+              </ProtectedRoute>
+            }
+          />
+        </Route>
+
+        {/* Catch all */}
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
+    </BrowserRouter>
   );
 }
 
-export default function App() {
-  return (
-    <AuthProvider>
-      <BrowserRouter>
-        <AppLayout />
-      </BrowserRouter>
-    </AuthProvider>
-  );
-}
+export default App;
+

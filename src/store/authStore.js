@@ -8,6 +8,48 @@ export const useAuthStore = create(
       token: null,
       isAuthenticated: false,
 
+      // Inicializar desde localStorage si existe
+      initialize: () => {
+        const token = localStorage.getItem('jwt_token');
+        const userStr = localStorage.getItem('user');
+
+        if (token && userStr) {
+          try {
+            const user = JSON.parse(userStr);
+            set({
+              user,
+              token,
+              isAuthenticated: true,
+            });
+            console.log('✅ AuthStore initialized from localStorage');
+          } catch (error) {
+            console.error('❌ Error parsing stored user:', error);
+            // Limpiar datos corruptos
+            localStorage.removeItem('jwt_token');
+            localStorage.removeItem('user');
+          }
+        }
+      },
+
+      // Verificar si el token sigue siendo válido
+      checkAuth: () => {
+        const token = localStorage.getItem('jwt_token');
+        const currentToken = get().token;
+
+        // Si el token en localStorage fue eliminado pero el estado aún lo tiene
+        if (!token && currentToken) {
+          console.log('⚠️ Token eliminado, limpiando estado');
+          set({
+            user: null,
+            token: null,
+            isAuthenticated: false,
+          });
+          return false;
+        }
+
+        return !!token;
+      },
+
       login: (userData, token) => {
         console.log('🏪 AuthStore - Login called');
         console.log('🏪 AuthStore - User data:', userData);

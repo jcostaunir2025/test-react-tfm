@@ -48,9 +48,15 @@ apiClient.interceptors.response.use(
 
       // Handle 401 Unauthorized
       if (error.response.status === 401) {
+        console.warn('⚠️ 401 Unauthorized - Token inválido o expirado');
+
+        // NO redirigir aquí para evitar loops infinitos
+        // Solo limpiar el localStorage
         localStorage.removeItem('jwt_token');
         localStorage.removeItem('user');
-        window.location.href = '/login';
+
+        // El componente ProtectedRoute se encargará de redirigir
+        console.log('🔓 Token eliminado - ProtectedRoute manejará la redirección');
       }
 
       // Handle other errors

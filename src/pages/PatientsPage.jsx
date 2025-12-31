@@ -285,6 +285,15 @@ export const PatientsPage = () => {
     }));
   };
 
+  // Función para manejar inputs numéricos
+  const handleNumericInput = (e, fieldName) => {
+    const value = e.target.value.replace(/\D/g, '');
+    setFormData(prev => ({
+      ...prev,
+      [fieldName]: value
+    }));
+  };
+
   // Si no tiene permiso de lectura
   if (!canRead) {
     return (
@@ -593,6 +602,7 @@ export const PatientsPage = () => {
         onSubmit={handleCreate}
         formData={formData}
         handleInputChange={handleInputChange}
+        handleNumericInput={handleNumericInput}
         loading={loading}
         title="Nuevo Paciente"
         submitLabel="Crear Paciente"
@@ -605,6 +615,7 @@ export const PatientsPage = () => {
         onSubmit={handleUpdate}
         formData={formData}
         handleInputChange={handleInputChange}
+        handleNumericInput={handleNumericInput}
         loading={loading}
         title="Editar Paciente"
         submitLabel="Actualizar Paciente"
@@ -655,6 +666,7 @@ const PatientFormModal = ({
   onSubmit,
   formData,
   handleInputChange,
+  handleNumericInput,
   loading,
   title,
   submitLabel,
@@ -699,10 +711,10 @@ const PatientFormModal = ({
             Documento *
           </label>
           <input
-            type="text"
+            type="number"
             name="docPaciente"
             value={formData.docPaciente}
-            onChange={handleInputChange}
+            onChange={(e) => handleNumericInput(e, 'docPaciente')}
             required
             className="input"
           />
@@ -763,7 +775,7 @@ const PatientFormModal = ({
             type="tel"
             name="telefonoPaciente"
             value={formData.telefonoPaciente}
-            onChange={handleInputChange}
+            onChange={(e) => handleNumericInput(e, 'telefonoPaciente')}
             required
             className="input"
           />
@@ -803,7 +815,7 @@ const PatientFormModal = ({
             type="tel"
             name="telefonoContactoPaciente"
             value={formData.telefonoContactoPaciente}
-            onChange={handleInputChange}
+            onChange={(e) => handleNumericInput(e, 'telefonoContactoPaciente')}
             className="input"
           />
         </div>

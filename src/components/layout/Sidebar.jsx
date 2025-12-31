@@ -43,9 +43,9 @@ export const Sidebar = () => {
           name: 'Dashboard',
           to: '/',
           icon: LayoutDashboard,
-          roles: ['ADMIN', 'DOCTOR', 'ENFERMERO', 'ANALISTA'],
+          roles: ['ADMIN', 'DOCTOR', 'ENFERMERO', 'ANALISTA', 'RECEPCIONISTA', 'AUDITOR'],
           badge: null,
-          description: 'Panel principal'
+          description: 'Panel principal con estadísticas y resumen'
         }
       ]
     },
@@ -59,7 +59,7 @@ export const Sidebar = () => {
           icon: Users,
           roles: ['ADMIN', 'DOCTOR', 'ENFERMERO', 'RECEPCIONISTA'],
           badge: null,
-          description: 'Gestión de pacientes'
+          description: 'Gestión completa de pacientes (CRUD)'
         },
         {
           name: 'Consultas',
@@ -67,7 +67,7 @@ export const Sidebar = () => {
           icon: Calendar,
           roles: ['ADMIN', 'DOCTOR', 'ENFERMERO'],
           badge: null,
-          description: 'Consultas médicas'
+          description: 'Consultas médicas y seguimiento'
         },
         {
           name: 'Evaluaciones',
@@ -75,7 +75,7 @@ export const Sidebar = () => {
           icon: ClipboardList,
           roles: ['ADMIN', 'DOCTOR', 'ENFERMERO', 'ANALISTA'],
           badge: null,
-          description: 'Evaluaciones clínicas'
+          description: 'Evaluaciones psicológicas y preguntas'
         },
         {
           name: 'Alto Riesgo',
@@ -83,7 +83,7 @@ export const Sidebar = () => {
           icon: AlertTriangle,
           roles: ['ADMIN', 'DOCTOR', 'ENFERMERO'],
           badge: { text: '!', variant: 'danger' },
-          description: 'Monitoreo de alto riesgo'
+          description: 'Monitoreo de pacientes con riesgo suicida'
         }
       ]
     },
@@ -96,8 +96,8 @@ export const Sidebar = () => {
           to: '/sentiment',
           icon: Brain,
           roles: ['ADMIN', 'DOCTOR', 'ANALISTA'],
-          badge: { text: 'IA', variant: 'info' },
-          description: 'Análisis con IA'
+          badge: { text: 'RNTN', variant: 'info' },
+          description: 'Análisis de sentimientos con modelo RNTN'
         },
         {
           name: 'Reportes',
@@ -105,7 +105,7 @@ export const Sidebar = () => {
           icon: FileText,
           roles: ['ADMIN', 'DOCTOR', 'ANALISTA', 'AUDITOR'],
           badge: null,
-          description: 'Reportes y estadísticas'
+          description: 'Reportes y estadísticas del sistema'
         }
       ]
     },
@@ -118,8 +118,8 @@ export const Sidebar = () => {
           to: '/users',
           icon: UserCog,
           roles: ['ADMIN'],
-          badge: null,
-          description: 'Gestión de usuarios'
+          badge: { text: 'Admin', variant: 'warning' },
+          description: 'Gestión de usuarios y roles (Solo ADMIN)'
         },
         {
           name: 'Configuración',

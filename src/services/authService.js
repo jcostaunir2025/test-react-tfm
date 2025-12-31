@@ -41,7 +41,15 @@ const normalizeAuthResponse = (response) => {
   }
 
   // Convertir a strings y normalizar a mayúsculas
-  const normalizedRoles = roles.map(role => String(role).toUpperCase().trim());
+  // El backend puede devolver roles como objetos {idRoles: "ADMIN", permisosRoles: [...]}
+  const normalizedRoles = roles.map(role => {
+    // Si el rol es un objeto con idRoles, extraer solo el nombre
+    if (typeof role === 'object' && role !== null && role.idRoles) {
+      return String(role.idRoles).toUpperCase().trim();
+    }
+    // Si ya es un string, devolverlo tal cual
+    return String(role).toUpperCase().trim();
+  });
 
   console.log('✨ Normalized roles:', normalizedRoles);
 

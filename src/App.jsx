@@ -5,42 +5,17 @@ import { ProtectedRoute } from './components/common/ProtectedRoute';
 import { LoginPage } from './pages/LoginPage';
 import { DashboardPage } from './pages/DashboardPage';
 import { PatientsPage } from './pages/PatientsPage';
-import { SentimentAnalysisPage } from './pages/SentimentAnalysisPage';
+import SentimentAnalysisPage from './pages/SentimentAnalysisPage';
 import { HighRiskMonitoringPage } from './pages/HighRiskMonitoringPage';
-
-// Placeholder pages - estas pueden ser desarrolladas después
-const ConsultationsPage = () => (
-  <div className="space-y-6">
-    <h1 className="text-3xl font-bold text-gray-900">Gestión de Consultas</h1>
-    <div className="card">
-      <p className="text-gray-600">Módulo de consultas médicas en desarrollo...</p>
-    </div>
-  </div>
-);
-
-const EvaluationsPage = () => (
-  <div className="space-y-6">
-    <h1 className="text-3xl font-bold text-gray-900">Evaluaciones</h1>
-    <div className="card">
-      <p className="text-gray-600">Módulo de evaluaciones en desarrollo...</p>
-    </div>
-  </div>
-);
+import ConsultationsPage from './pages/ConsultationsPage';
+import EvaluationsPage from './pages/EvaluationsPage';
+import UsersPage from './pages/UsersPage';
 
 const ReportsPage = () => (
   <div className="space-y-6">
     <h1 className="text-3xl font-bold text-gray-900">Reportes</h1>
     <div className="card">
       <p className="text-gray-600">Módulo de reportes en desarrollo...</p>
-    </div>
-  </div>
-);
-
-const UsersPage = () => (
-  <div className="space-y-6">
-    <h1 className="text-3xl font-bold text-gray-900">Gestión de Usuarios</h1>
-    <div className="card">
-      <p className="text-gray-600">Módulo de usuarios en desarrollo (solo ADMIN)...</p>
     </div>
   </div>
 );

@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
 import { useApi } from '../../hooks/useApi';
 import { patientService, sentimentService } from '../../services';
-import Card from '../common/Card';
-import Loading from '../common/Loading';
-import Alert from '../common/Alert';
+import { Card } from '../common/Card';
+import { Spinner } from '../common/Loading';
+import { Alert } from '../common/Alert';
 
 /**
  * Ejemplo de componente usando useApi hook
@@ -38,7 +38,11 @@ const ExampleApiUsage = () => {
   };
 
   if (loading) {
-    return <Loading message="Cargando datos..." />;
+    return (
+      <div className="flex justify-center items-center py-12">
+        <Spinner />
+      </div>
+    );
   }
 
   return (

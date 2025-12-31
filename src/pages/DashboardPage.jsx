@@ -8,7 +8,7 @@ import evaluationService from '../services/evaluationService';
 import { Alert } from '../components/common/Alert';
 
 export const DashboardPage = () => {
-  const { user } = useAuthStore();
+  const { user, token, isAuthenticated } = useAuthStore();
   const [stats, setStats] = useState({
     totalPatients: 0,
     totalConsultations: 0,
@@ -16,31 +16,82 @@ export const DashboardPage = () => {
     highRiskCases: 0,
   });
   const [highRiskData, setHighRiskData] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
+    let isMounted = true;
+
+    const loadDashboardData = async () => {
+      // Solo cargar si hay token y está autenticado
+      if (!token || !isAuthenticated) {
+        console.log('⚠️ No hay token, usando datos mock');
+        // Usar datos mock sin llamar al API
+        if (isMounted) {
+          setStats({
+            totalPatients: 150,
+            totalConsultations: 45,
+            totalEvaluations: 320,
+            highRiskCases: 0,
+          });
+          setLoading(false);
+        }
+        return;
+      }
+
+      // Solo cargar si el componente está montado
+      if (!isMounted) return;
+
+      try {
+        setLoading(true);
+        setError(null);
+
+        // Load high-risk cases - using the correct function
+        const highRisk = await evaluationService.getHighRiskAnswers(0.7);
+
+        if (!isMounted) return;
+
+        setHighRiskData(Array.isArray(highRisk) ? highRisk : []);
+
+        // Mock stats - in real app, these would come from API
+        setStats({
+          totalPatients: 150,
+          totalConsultations: 45,
+          totalEvaluations: 320,
+          highRiskCases: Array.isArray(highRisk) ? highRisk.length : 0,
+        });
+      } catch (error) {
+        if (!isMounted) return;
+
+        console.error('Error loading dashboard:', error);
+
+        // Si es error 401, no mostrar error (ya se redirige al login)
+        if (error.status !== 401) {
+          setError('No se pudieron cargar algunos datos del dashboard');
+        }
+
+        // Set mock data on error
+        setHighRiskData([]);
+        setStats({
+          totalPatients: 150,
+          totalConsultations: 45,
+          totalEvaluations: 320,
+          highRiskCases: 0,
+        });
+      } finally {
+        if (isMounted) {
+          setLoading(false);
+        }
+      }
+    };
+
     loadDashboardData();
-  }, []);
 
-  const loadDashboardData = async () => {
-    try {
-      // Load high-risk cases
-      const highRisk = await evaluationService.getHighRiskRecent(7);
-      setHighRiskData(highRisk);
-
-      // Mock stats - in real app, these would come from API
-      setStats({
-        totalPatients: 150,
-        totalConsultations: 45,
-        totalEvaluations: 320,
-        highRiskCases: highRisk.length,
-      });
-    } catch (error) {
-      console.error('Error loading dashboard:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
+    // Cleanup function
+    return () => {
+      isMounted = false;
+    };
+  }, [token, isAuthenticated]); // Dependencias: token e isAuthenticated
 
   const statCards = [
     {
@@ -85,25 +136,36 @@ export const DashboardPage = () => {
         </p>
       </div>
 
+      {/* Error Alert */}
+      {error && (
+        <Alert type="error" message={error} onClose={() => setError(null)} />
+      )}
+
       {/* 🔍 Panel de Debug - TEMPORAL */}
       <RoleDebugPanel />
 
       {/* Stats grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        {statCards.map((stat, index) => (
-          <Card key={index}>
-            <div className="flex items-center">
-              <div className={`${stat.bgColor} p-3 rounded-lg`}>
-                <stat.icon className={`h-6 w-6 ${stat.color}`} />
+      {loading ? (
+        <div className="flex justify-center items-center py-12">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          {statCards.map((stat, index) => (
+            <Card key={index}>
+              <div className="flex items-center">
+                <div className={`${stat.bgColor} p-3 rounded-lg`}>
+                  <stat.icon className={`h-6 w-6 ${stat.color}`} />
+                </div>
+                <div className="ml-4">
+                  <p className="text-sm font-medium text-gray-600">{stat.title}</p>
+                  <p className="text-2xl font-bold text-gray-900">{stat.value}</p>
+                </div>
               </div>
-              <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">{stat.title}</p>
-                <p className="text-2xl font-bold text-gray-900">{stat.value}</p>
-              </div>
-            </div>
-          </Card>
-        ))}
-      </div>
+            </Card>
+          ))}
+        </div>
+      )}
 
       {/* Quick Access Menu */}
       <QuickAccessMenu />
